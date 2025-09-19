@@ -22,7 +22,7 @@ namespace Analysis_Middle_Server
         private static void SetAnlysisStart()
         {
             kernel = new StandardKernel(new AppModuleClass());
-            kernel.Get<DBManagerClass>().SetAnlysisAndStart();
+            ///kernel.Get<DBManagerClass>().SetAnlysisAndStart();
         }
     }
 }

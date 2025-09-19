@@ -143,6 +143,8 @@
     <Compile Include="DI\AppModuleClass.cs" />
     <Compile Include="Manager\DBManager\DBManagerClass.cs" />
     <Compile Include="Manager\DBManager\IDBManagerClass.cs" />
+    <Compile Include="Manager\StreamManager\IStreamManger.cs" />
+    <Compile Include="Manager\StreamManager\StreamManger.cs" />
     <Compile Include="Manager\Systeminfomanager\ISystemInfoManagerClass.cs" />
     <Compile Include="Manager\Systeminfomanager\SystemInfoManagerClass.cs" />
     <Compile Include="Program.cs" />
