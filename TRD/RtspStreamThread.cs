@@ -11,6 +11,7 @@ namespace Analysis_Middle_Server.TRD
 {
     public class RtspStreamThread
     {
+        private int _cameraId;
         private Thread _thread;
         private string _rtspUrl;
         private bool _running;
@@ -18,8 +19,9 @@ namespace Analysis_Middle_Server.TRD
         private Mat _rtspStream;
         private object _rtspStreamLock = new object();
 
-        public RtspStreamThread(string rtspUrl, int fps = 30)
+        public RtspStreamThread(int cameraId, string rtspUrl, int fps = 30)
         {
+            _cameraId = cameraId;
             _rtspUrl = rtspUrl;
             _fps = fps > 0 ? fps : 30; // 0 이하일 경우 기본 30fps
             _rtspStream = new Mat();
@@ -31,7 +33,6 @@ namespace Analysis_Middle_Server.TRD
             {
                 _running = true;
                 _thread = new Thread(Run);
-                _thread.IsBackground = true;
                 _thread.Start();
             }
         }
@@ -49,7 +50,11 @@ namespace Analysis_Middle_Server.TRD
                 return _rtspStream.Clone();
             }
         }
-        
+        public int GetCameraId()
+        {
+            return _cameraId;
+        }
+
         private void Run()
         {
             var capture = new VideoCapture(_rtspUrl);

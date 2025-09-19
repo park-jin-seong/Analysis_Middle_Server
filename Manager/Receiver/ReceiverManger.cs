@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Analysis_Middle_Server.Manager.DBManager;
+using Analysis_Middle_Server.Structure.Analysis;
 using Analysis_Middle_Server.Structure.DB;
 using Analysis_Middle_Server.TRD;
 using OpenCvSharp;
 
-namespace Analysis_Middle_Server.Manager.StreamManager
+namespace Analysis_Middle_Server.Manager
 {
     public class ReceiverManger : IReceiverManger
     {
@@ -26,7 +27,7 @@ namespace Analysis_Middle_Server.Manager.StreamManager
             }
         }
 
-        public Mat GetStream(int cameraId)
+        public List<AnalysisReultClass> GetAnalysisReult(int cameraId)
         {
             foreach (RtspStreamThread rtspStreamThread in m_RtspStreamThreads)
             {
@@ -38,14 +39,6 @@ namespace Analysis_Middle_Server.Manager.StreamManager
             }
             Mat mat = new Mat(new Size(720, 240), MatType.CV_8UC3, Scalar.All(0));
             return mat;
-        }
-
-        internal void SetAnlysisAndStart()
-        {
-            //foreach (RtspStreamThread rtspStreamThread in m_RtspStreamThreads)
-            //{
-            //    rtspStreamThread.Start();
-            //}
         }
     }
 }

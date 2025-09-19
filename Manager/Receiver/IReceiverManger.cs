@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Analysis_Middle_Server.Structure.Analysis;
 using OpenCvSharp;
 
-namespace Analysis_Middle_Server.Manager.StreamManager
+namespace Analysis_Middle_Server.Manager
 {
     public interface IReceiverManger
     {
-        Mat GetStream(int cameraId);
+        List<AnalysisReultClass> GetAnalysisReult(int cameraId);
     }
 }

@@ -16,18 +16,21 @@ namespace Analysis_Middle_Server.Manager.DBManager
     public class DBManagerClass : IDBManagerClass
     {
         private SystemInfoClass m_SystemInfoClass;
-        private ServerInfosClass m_ServerInfosClass;
+        private ServerInfosClass m_MyServerInfosClass;
+        private List<ServerInfosClass> m_ServerInfosClasses;
         private List<CameraInfoClass> m_CameraInfosClasses;
 
         public DBManagerClass(ISystemInfoManagerClass systemInfoManagerClass)
         {
             m_SystemInfoClass = systemInfoManagerClass.GetSystemInfoClass();
+            m_ServerInfosClasses = new List<ServerInfosClass>();
             m_CameraInfosClasses = new List<CameraInfoClass>();
 
             InsertServerInfo();
             GetCameraInfosDB();
         }
-        public ServerInfosClass GetServerInfosClass() => m_ServerInfosClass;
+        public ServerInfosClass GetMyServerInfosClass() => m_MyServerInfosClass;
+        public List<ServerInfosClass> GetServerInfosClasses() => m_ServerInfosClasses;
         public List<CameraInfoClass> GetCameraInfosClasses() => m_CameraInfosClasses;
 
         private void InsertServerInfo()
@@ -48,7 +51,7 @@ namespace Analysis_Middle_Server.Manager.DBManager
                 string targetPort = "20000";
                 string targetJson = JsonConvert.SerializeObject(new List<string>());
 
-                using (var checkCmd = new MySqlCommand("SELECT COUNT(*) FROM serverInfos WHERE serverIp = @ip AND serverType = Middle;", conn))
+                using (var checkCmd = new MySqlCommand("SELECT COUNT(*) FROM serverInfos WHERE serverIp = @ip AND serverType = 'Middle';", conn))
                 {
                     checkCmd.Parameters.AddWithValue("@ip", targetIp);
                     long count = Convert.ToInt64(checkCmd.ExecuteScalar());
@@ -67,29 +70,46 @@ namespace Analysis_Middle_Server.Manager.DBManager
                             Console.WriteLine("새 서버 데이터 삽입 완료");
                         }
                     }
-                    else
+                    using (var selectCmd = new MySqlCommand(
+                            "SELECT serverId, serverIp, serverPort, serverType, osId, osPw FROM serverInfos WHERE serverIp = @ip AND serverType = 'Middle';", conn))
                     {
-                        using (var selectCmd = new MySqlCommand(
-                            "SELECT serverId, serverIp, serverPort, serverType, osId, osPw FROM serverInfos WHERE serverIp = @ip;", conn))
+                        selectCmd.Parameters.AddWithValue("@ip", targetIp);
+
+                        using (var reader = selectCmd.ExecuteReader())
                         {
-                            selectCmd.Parameters.AddWithValue("@ip", targetIp);
-
-                            using (var reader = selectCmd.ExecuteReader())
+                            if (reader.Read())
                             {
-                                if (reader.Read())
-                                {
-                                    m_ServerInfosClass = new ServerInfosClass(
-                                        reader.GetInt32("serverId"),
-                                        reader.GetString("serverIp"),
-                                        reader.GetInt32("serverPort"),
-                                        reader.GetString("serverType"),
-                                        reader.IsDBNull(reader.GetOrdinal("osId")) ? "" : reader.GetString("osId"),
-                                        reader.IsDBNull(reader.GetOrdinal("osPw")) ? "" : reader.GetString("osPw")
-                                    );
+                                m_MyServerInfosClass = new ServerInfosClass(
+                                    reader.GetInt32("serverId"),
+                                    reader.GetString("serverIp"),
+                                    reader.GetInt32("serverPort"),
+                                    reader.GetString("serverType"),
+                                    reader.IsDBNull(reader.GetOrdinal("osId")) ? "" : reader.GetString("osId"),
+                                    reader.IsDBNull(reader.GetOrdinal("osPw")) ? "" : reader.GetString("osPw")
+                                );
 
-                                    Console.WriteLine("이미 존재하는 서버 정보:");
-                                    Console.WriteLine($"ID: {m_ServerInfosClass.serverId}, IP: {m_ServerInfosClass.serverIp}, Port: {m_ServerInfosClass.serverPort}, Type: {m_ServerInfosClass.serverType}");
-                                }
+                                Console.WriteLine("이미 존재하는 서버 정보:");
+                                Console.WriteLine($"ID: {m_MyServerInfosClass.serverId}, IP: {m_MyServerInfosClass.serverIp}, Port: {m_MyServerInfosClass.serverPort}, Type: {m_MyServerInfosClass.serverType}");
+                            }
+                        }
+                    }
+                    using (var selectCmd = new MySqlCommand(
+                           "SELECT serverId, serverIp, serverPort, serverType, osId, osPw FROM serverInfos;", conn))
+                    {
+
+                        using (var reader = selectCmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                ServerInfosClass tempServerInfosClass = new ServerInfosClass(
+                                    reader.GetInt32("serverId"),
+                                    reader.GetString("serverIp"),
+                                    reader.GetInt32("serverPort"),
+                                    reader.GetString("serverType"),
+                                    reader.IsDBNull(reader.GetOrdinal("osId")) ? "" : reader.GetString("osId"),
+                                    reader.IsDBNull(reader.GetOrdinal("osPw")) ? "" : reader.GetString("osPw")
+                                );
+                                m_ServerInfosClasses.Add(tempServerInfosClass);
                             }
                         }
                     }
@@ -116,7 +136,7 @@ namespace Analysis_Middle_Server.Manager.DBManager
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        if (reader.Read())
+                        while (reader.Read())
                         {
                             m_CameraInfosClasses.Add(new CameraInfoClass(
                                 reader.GetInt32(0),

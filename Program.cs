@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Analysis_Middle_Server.DI;
 using Analysis_Middle_Server.Manager.DBManager;
+using Analysis_Middle_Server.Manager.StreamManager;
 using Analysis_Middle_Server.TRD;
 using Ninject;
 
@@ -22,7 +23,7 @@ namespace Analysis_Middle_Server
         private static void SetAnlysisStart()
         {
             kernel = new StandardKernel(new AppModuleClass());
-            ///kernel.Get<DBManagerClass>().SetAnlysisAndStart();
+            kernel.Get<ReceiverManger>().SetAnlysisAndStart();
         }
     }
 }

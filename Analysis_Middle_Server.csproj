@@ -143,19 +143,21 @@
     <Compile Include="DI\AppModuleClass.cs" />
     <Compile Include="Manager\DBManager\DBManagerClass.cs" />
     <Compile Include="Manager\DBManager\IDBManagerClass.cs" />
+    <Compile Include="Manager\Receiver\IReceiverManger.cs" />
+    <Compile Include="Manager\Receiver\ReceiverManger.cs" />
     <Compile Include="Manager\StreamManager\IStreamManger.cs" />
     <Compile Include="Manager\StreamManager\StreamManger.cs" />
     <Compile Include="Manager\Systeminfomanager\ISystemInfoManagerClass.cs" />
     <Compile Include="Manager\Systeminfomanager\SystemInfoManagerClass.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Structure\Analysis\AnalysisReultClass.cs" />
     <Compile Include="Structure\DB\CameraInfoClass.cs" />
     <Compile Include="Structure\DB\ServerInfosClass.cs" />
     <Compile Include="Structure\Systeminfo\DataBaseClass.cs" />
     <Compile Include="Structure\Systeminfo\SystemInfoClass.cs" />
-    <Compile Include="TRD\AnalysisTcpThread.cs" />
+    <Compile Include="TRD\ReceiverThreadClass.cs" />
     <Compile Include="TRD\RtspStreamThread.cs" />
-    <Compile Include="TRD\StreamSessionThread.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
