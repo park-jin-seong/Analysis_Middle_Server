@@ -15,7 +15,9 @@ namespace Analysis_Middle_Server.Structure.DB
         public float coordy { get; }
         public bool isAnalisis { get; }
 
-        public CameraInfoClass(int cameraId, string cameraName, string cctvUrl, float coordx, float coordy, bool isAnalisis)
+        public int analysisServerId { get; }
+
+        public CameraInfoClass(int cameraId, string cameraName, string cctvUrl, float coordx, float coordy, bool isAnalisis, int analysisServerId)
         {
             this.cameraId = cameraId;
             this.cameraName = cameraName;
@@ -23,6 +25,7 @@ namespace Analysis_Middle_Server.Structure.DB
             this.coordx = coordx;
             this.coordy = coordy;
             this.isAnalisis = isAnalisis;
+            this.analysisServerId = analysisServerId;
         }
     }
 }

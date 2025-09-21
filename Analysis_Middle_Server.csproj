@@ -156,7 +156,7 @@
     <Compile Include="Structure\DB\ServerInfosClass.cs" />
     <Compile Include="Structure\Systeminfo\DataBaseClass.cs" />
     <Compile Include="Structure\Systeminfo\SystemInfoClass.cs" />
-    <Compile Include="TRD\ReceiverThreadClass.cs" />
+    <Compile Include="TRD\AnalysisReceiverThreadClass.cs" />
     <Compile Include="TRD\RtspStreamThread.cs" />
   </ItemGroup>
   <ItemGroup>

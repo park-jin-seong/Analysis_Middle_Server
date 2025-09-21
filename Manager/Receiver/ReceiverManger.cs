@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Analysis_Middle_Server.Manager.DBManager;
@@ -13,32 +14,39 @@ namespace Analysis_Middle_Server.Manager
 {
     public class ReceiverManger : IReceiverManger
     {
+        private List<ServerInfosClass> m_ServerInfosClasses;
         private List<CameraInfoClass> m_CameraInfosClasses;
-        private List<RtspStreamThread> m_RtspStreamThreads;
+        private List<AnalysisReceiverThreadClass> analysisReceiverThreadClasses;
         public ReceiverManger(IDBManagerClass dBManagerClass) {
+            m_ServerInfosClasses = dBManagerClass.GetServerInfosClasses();
             m_CameraInfosClasses = dBManagerClass.GetCameraInfosClasses();
+            analysisReceiverThreadClasses = new List<AnalysisReceiverThreadClass>();
 
-            m_RtspStreamThreads = new List<RtspStreamThread>();
-            foreach (CameraInfoClass cameraInfosClasses in m_CameraInfosClasses)
+            foreach (CameraInfoClass cameraInfoClass in m_CameraInfosClasses)
             {
-                RtspStreamThread rtspStreamThread = new RtspStreamThread(cameraInfosClasses.cameraId, cameraInfosClasses.cctvUrl);
-                rtspStreamThread.Start();
-                m_RtspStreamThreads.Add(rtspStreamThread);
+                ServerInfosClass tmpServerInfo = new ServerInfosClass();
+                foreach (ServerInfosClass serverInfosClass in m_ServerInfosClasses)
+                {
+                    if (serverInfosClass.serverId == cameraInfoClass.analysisServerId)
+                    {
+                        tmpServerInfo = serverInfosClass;
+                    }
+                }
+                AnalysisReceiverThreadClass analysisReceiverThreadClass = new AnalysisReceiverThreadClass(new TcpClient(tmpServerInfo.serverIp, tmpServerInfo.serverPort), cameraInfoClass.cameraId);
             }
+
         }
 
         public List<AnalysisReultClass> GetAnalysisReult(int cameraId)
         {
-            foreach (RtspStreamThread rtspStreamThread in m_RtspStreamThreads)
+            foreach (AnalysisReceiverThreadClass analysisReceiverThreadClass in analysisReceiverThreadClasses)
             {
-                if (rtspStreamThread.GetCameraId() == cameraId)
+                if (analysisReceiverThreadClass.getCameraID() == cameraId)
                 {
-                    return rtspStreamThread.GetFrame();
+                    return analysisReceiverThreadClass.GetAnalysisReult();
                 }
-
             }
-            Mat mat = new Mat(new Size(720, 240), MatType.CV_8UC3, Scalar.All(0));
-            return mat;
+            return null;
         }
     }
 }

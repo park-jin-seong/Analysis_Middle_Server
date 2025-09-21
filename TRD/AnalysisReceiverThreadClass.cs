@@ -10,20 +10,20 @@ using Newtonsoft.Json;
 
 namespace Analysis_Middle_Server.TRD
 {
-    public class ReceiverThreadClass
+    public class AnalysisReceiverThreadClass
     {
         private Thread m_Thread;
         private bool m_Running;
         private TcpClient m_tcpClient;
-        private string m_videoSourceId;
+        private int m_CameraID;
 
         private readonly object m_AnalysisLock = new object();
         private List<AnalysisReultClass> m_analysisReultClasses;
 
-        public ReceiverThreadClass(TcpClient tcpClient, string videoSourceId)
+        public AnalysisReceiverThreadClass(TcpClient tcpClient, int cameraId)
         {
             m_tcpClient = tcpClient;
-            m_videoSourceId = videoSourceId;
+            m_CameraID = cameraId;
             m_analysisReultClasses = new List<AnalysisReultClass>();
             m_Thread = new Thread(DoWork);
         }
@@ -45,6 +45,11 @@ namespace Analysis_Middle_Server.TRD
             m_Thread?.Join();
         }
 
+        public int getCameraID()
+        {
+            return m_CameraID;
+        }
+
         public List<AnalysisReultClass> GetAnalysisReult()
         {
             lock (m_AnalysisLock)
@@ -60,7 +65,7 @@ namespace Analysis_Middle_Server.TRD
                 NetworkStream stream = m_tcpClient.GetStream();
 
                 // 서버에 먼저 videoSourceId 전송 (SenderThreadClass에서 수신하므로)
-                byte[] sourceIdBytes = Encoding.UTF8.GetBytes(m_videoSourceId);
+                byte[] sourceIdBytes = Encoding.UTF8.GetBytes(m_CameraID.ToString());
                 byte[] lengthPrefix = BitConverter.GetBytes(sourceIdBytes.Length);
                 stream.Write(lengthPrefix, 0, lengthPrefix.Length);
                 stream.Write(sourceIdBytes, 0, sourceIdBytes.Length);

@@ -131,7 +131,7 @@ namespace Analysis_Middle_Server.Manager.DBManager
                 conn.Open();
 
                 using (var cmd = new MySqlCommand(
-                    "SELECT cameraId, cameraName, cctvUrl, coordx, coordy, isAnalisis FROM camerainfos WHERE isAnalisis = 1;", conn))
+                    "SELECT cameraId, cameraName, cctvUrl, coordx, coordy, isAnalisis, analysisServerId FROM camerainfos WHERE isAnalisis = 1;", conn))
                 {
 
                     using (var reader = cmd.ExecuteReader())
@@ -144,7 +144,8 @@ namespace Analysis_Middle_Server.Manager.DBManager
                                 reader.GetString(2),
                                 reader.GetFloat(3),
                                 reader.GetFloat(4),
-                                reader.GetBoolean(5)));
+                                reader.GetBoolean(5),
+                                reader.GetInt32(6)));
                         }
                     }
                 }

@@ -17,6 +17,7 @@ namespace Analysis_Middle_Server.Structure.DB
 
         public string osPw { get; }
 
+
         public ServerInfosClass(int serverId, string serverIp, int serverPort, string serverType, string osId, string osPw)
         {
             this.serverId = serverId;
@@ -25,6 +26,10 @@ namespace Analysis_Middle_Server.Structure.DB
             this.serverType = serverType;
             this.osId = osId;
             this.osPw = osPw;
+        }
+
+        public ServerInfosClass()
+        {
         }
     }
 }
