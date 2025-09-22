@@ -216,10 +216,14 @@
     <Compile Include="Manager\Receiver\IAnalysisReceiverManger.cs" />
     <Compile Include="Manager\Receiver\AnalysisReceiverManger.cs" />
     <Compile Include="Manager\RenderManager\IRenderManager.cs" />
+    <Compile Include="Manager\RTCPeerConnectionManager.cs" />
+    <Compile Include="Manager\RTCPeerConnectionThreadClass.cs" />
     <Compile Include="Manager\StreamManager\IStreamManger.cs" />
     <Compile Include="Manager\StreamManager\StreamManger.cs" />
     <Compile Include="Manager\Systeminfomanager\ISystemInfoManagerClass.cs" />
     <Compile Include="Manager\Systeminfomanager\SystemInfoManagerClass.cs" />
+    <Compile Include="Manager\WebRTCSignalingBehavior.cs" />
+    <Compile Include="Manager\WebRTCSignalingServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structure\Analysis\AnalysisReultClass.cs" />
@@ -229,7 +233,6 @@
     <Compile Include="Structure\Systeminfo\SystemInfoClass.cs" />
     <Compile Include="TRD\AnalysisReceiverThreadClass.cs" />
     <Compile Include="TRD\RenderThreadClass.cs" />
-    <Compile Include="TRD\RTCPeerConnectionThreadClass.cs" />
     <Compile Include="TRD\RtspStreamThreadClass.cs" />
   </ItemGroup>
   <ItemGroup>
