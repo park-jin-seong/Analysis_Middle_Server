@@ -9,7 +9,7 @@ using OpenCvSharp;
 
 namespace Analysis_Middle_Server.TRD
 {
-    public class RtspStreamThread
+    public class RtspStreamThreadClass
     {
         private int _cameraId;
         private Thread _thread;
@@ -19,7 +19,7 @@ namespace Analysis_Middle_Server.TRD
         private Mat _rtspStream;
         private object _rtspStreamLock = new object();
 
-        public RtspStreamThread(int cameraId, string rtspUrl, int fps = 30)
+        public RtspStreamThreadClass(int cameraId, string rtspUrl, int fps = 30)
         {
             _cameraId = cameraId;
             _rtspUrl = rtspUrl;

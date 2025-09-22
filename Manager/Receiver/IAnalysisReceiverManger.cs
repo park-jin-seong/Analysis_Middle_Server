@@ -8,7 +8,7 @@ using OpenCvSharp;
 
 namespace Analysis_Middle_Server.Manager
 {
-    public interface IReceiverManger
+    public interface IAnalysisReceiverManger
     {
         List<AnalysisReultClass> GetAnalysisReult(int cameraId);
     }

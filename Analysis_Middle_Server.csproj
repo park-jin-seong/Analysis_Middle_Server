@@ -143,8 +143,8 @@
     <Compile Include="DI\AppModuleClass.cs" />
     <Compile Include="Manager\DBManager\DBManagerClass.cs" />
     <Compile Include="Manager\DBManager\IDBManagerClass.cs" />
-    <Compile Include="Manager\Receiver\IReceiverManger.cs" />
-    <Compile Include="Manager\Receiver\ReceiverManger.cs" />
+    <Compile Include="Manager\Receiver\IAnalysisReceiverManger.cs" />
+    <Compile Include="Manager\Receiver\AnalysisReceiverManger.cs" />
     <Compile Include="Manager\StreamManager\IStreamManger.cs" />
     <Compile Include="Manager\StreamManager\StreamManger.cs" />
     <Compile Include="Manager\Systeminfomanager\ISystemInfoManagerClass.cs" />

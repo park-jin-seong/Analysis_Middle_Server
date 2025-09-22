@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Analysis_Middle_Server.Manager;
 using Analysis_Middle_Server.Manager.DBManager;
 using Analysis_Middle_Server.Manager.StreamManager;
 using Analysis_Middle_Server.Manager.Systeminfomanager;
@@ -17,11 +18,15 @@ namespace Analysis_Middle_Server.DI
         {
             Bind<ISystemInfoManagerClass>().To<SystemInfoManagerClass>().InSingletonScope();
             Bind<IDBManagerClass>().To<DBManagerClass>().InSingletonScope();
-            Bind<IReceiverManger>().To<ReceiverManger>().InSingletonScope();
+            Bind<IStreamManger>().To<StreamManger>().InSingletonScope();
+            Bind<IAnalysisReceiverManger>().To<AnalysisReceiverManger>().InSingletonScope();
+
 
             Bind<SystemInfoManagerClass>().ToSelf().InSingletonScope();
             Bind<DBManagerClass>().ToSelf().InSingletonScope();
-            Bind<ReceiverManger>().ToSelf().InSingletonScope();
+            Bind<StreamManger>().ToSelf().InSingletonScope();
+            Bind<AnalysisReceiverManger>().ToSelf().InSingletonScope();
+
         }
     }
 }

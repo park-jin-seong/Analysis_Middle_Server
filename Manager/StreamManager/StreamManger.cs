@@ -10,17 +10,17 @@ using OpenCvSharp;
 
 namespace Analysis_Middle_Server.Manager.StreamManager
 {
-    public class ReceiverManger : IReceiverManger
+    public class StreamManger : IStreamManger
     {
         private List<CameraInfoClass> m_CameraInfosClasses;
-        private List<RtspStreamThread> m_RtspStreamThreads;
-        public ReceiverManger(IDBManagerClass dBManagerClass) {
+        private List<RtspStreamThreadClass> m_RtspStreamThreads;
+        public StreamManger(IDBManagerClass dBManagerClass) {
             m_CameraInfosClasses = dBManagerClass.GetCameraInfosClasses();
 
-            m_RtspStreamThreads = new List<RtspStreamThread>();
+            m_RtspStreamThreads = new List<RtspStreamThreadClass>();
             foreach (CameraInfoClass cameraInfosClasses in m_CameraInfosClasses)
             {
-                RtspStreamThread rtspStreamThread = new RtspStreamThread(cameraInfosClasses.cameraId, cameraInfosClasses.cctvUrl);
+                RtspStreamThreadClass rtspStreamThread = new RtspStreamThread(cameraInfosClasses.cameraId, cameraInfosClasses.cctvUrl);
                 rtspStreamThread.Start();
                 m_RtspStreamThreads.Add(rtspStreamThread);
             }
@@ -28,7 +28,7 @@ namespace Analysis_Middle_Server.Manager.StreamManager
 
         public Mat GetStream(int cameraId)
         {
-            foreach (RtspStreamThread rtspStreamThread in m_RtspStreamThreads)
+            foreach (RtspStreamThreadClass rtspStreamThread in m_RtspStreamThreads)
             {
                 if (rtspStreamThread.GetCameraId() == cameraId)
                 {
@@ -42,10 +42,6 @@ namespace Analysis_Middle_Server.Manager.StreamManager
 
         internal void SetAnlysisAndStart()
         {
-            //foreach (RtspStreamThread rtspStreamThread in m_RtspStreamThreads)
-            //{
-            //    rtspStreamThread.Start();
-            //}
         }
     }
 }

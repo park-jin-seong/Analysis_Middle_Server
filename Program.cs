@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using Analysis_Middle_Server.DI;
+using Analysis_Middle_Server.Manager;
 using Analysis_Middle_Server.Manager.DBManager;
 using Analysis_Middle_Server.Manager.StreamManager;
 using Analysis_Middle_Server.TRD;
@@ -23,7 +24,8 @@ namespace Analysis_Middle_Server
         private static void SetAnlysisStart()
         {
             kernel = new StandardKernel(new AppModuleClass());
-            kernel.Get<ReceiverManger>().SetAnlysisAndStart();
+            kernel.Get<StreamManger>().SetAnlysisAndStart();
+            kernel.Get<AnalysisReceiverManger>().SetAnlysisAndStart();
         }
     }
 }

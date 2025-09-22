@@ -12,12 +12,12 @@ using OpenCvSharp;
 
 namespace Analysis_Middle_Server.Manager
 {
-    public class ReceiverManger : IReceiverManger
+    public class AnalysisReceiverManger : IAnalysisReceiverManger
     {
         private List<ServerInfosClass> m_ServerInfosClasses;
         private List<CameraInfoClass> m_CameraInfosClasses;
         private List<AnalysisReceiverThreadClass> analysisReceiverThreadClasses;
-        public ReceiverManger(IDBManagerClass dBManagerClass) {
+        public AnalysisReceiverManger(IDBManagerClass dBManagerClass) {
             m_ServerInfosClasses = dBManagerClass.GetServerInfosClasses();
             m_CameraInfosClasses = dBManagerClass.GetCameraInfosClasses();
             analysisReceiverThreadClasses = new List<AnalysisReceiverThreadClass>();
@@ -32,9 +32,10 @@ namespace Analysis_Middle_Server.Manager
                         tmpServerInfo = serverInfosClass;
                     }
                 }
-                AnalysisReceiverThreadClass analysisReceiverThreadClass = new AnalysisReceiverThreadClass(new TcpClient(tmpServerInfo.serverIp, tmpServerInfo.serverPort), cameraInfoClass.cameraId);
+                AnalysisReceiverThreadClass analysisReceiverThreadClass = new AnalysisReceiverThreadClass(tmpServerInfo.serverIp, tmpServerInfo.serverPort, cameraInfoClass.cameraId);
+                analysisReceiverThreadClass.Start();
+                analysisReceiverThreadClasses.Add(analysisReceiverThreadClass);
             }
-
         }
 
         public List<AnalysisReultClass> GetAnalysisReult(int cameraId)
@@ -47,6 +48,10 @@ namespace Analysis_Middle_Server.Manager
                 }
             }
             return null;
+        }
+
+        internal void SetAnlysisAndStart()
+        {
         }
     }
 }

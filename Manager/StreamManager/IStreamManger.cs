@@ -7,7 +7,7 @@ using OpenCvSharp;
 
 namespace Analysis_Middle_Server.Manager.StreamManager
 {
-    public interface IReceiverManger
+    public interface IStreamManger
     {
         Mat GetStream(int cameraId);
     }
