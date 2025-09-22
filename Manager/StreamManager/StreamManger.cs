@@ -20,7 +20,7 @@ namespace Analysis_Middle_Server.Manager.StreamManager
             m_RtspStreamThreads = new List<RtspStreamThreadClass>();
             foreach (CameraInfoClass cameraInfosClasses in m_CameraInfosClasses)
             {
-                RtspStreamThreadClass rtspStreamThread = new RtspStreamThread(cameraInfosClasses.cameraId, cameraInfosClasses.cctvUrl);
+                RtspStreamThreadClass rtspStreamThread = new RtspStreamThreadClass(cameraInfosClasses.cameraId, cameraInfosClasses.cctvUrl);
                 rtspStreamThread.Start();
                 m_RtspStreamThreads.Add(rtspStreamThread);
             }
