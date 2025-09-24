@@ -213,27 +213,29 @@
     <Compile Include="DI\AppModuleClass.cs" />
     <Compile Include="Manager\DBManager\DBManagerClass.cs" />
     <Compile Include="Manager\DBManager\IDBManagerClass.cs" />
-    <Compile Include="Manager\Receiver\IAnalysisReceiverManger.cs" />
-    <Compile Include="Manager\Receiver\AnalysisReceiverManger.cs" />
+    <Compile Include="Manager\AnalysisReceiver\IAnalysisReceiverManger.cs" />
+    <Compile Include="Manager\AnalysisReceiver\AnalysisReceiverManger.cs" />
     <Compile Include="Manager\RenderManager\IRenderManager.cs" />
-    <Compile Include="Manager\RTCPeerConnectionManager.cs" />
-    <Compile Include="Manager\RTCPeerConnectionThreadClass.cs" />
+    <Compile Include="Manager\RenderManager\RenderManager.cs" />
+    <Compile Include="Manager\SocketManager\ISocketManagerClass.cs" />
+    <Compile Include="Manager\SocketManager\SocketManagerClass.cs" />
     <Compile Include="Manager\StreamManager\IStreamManger.cs" />
     <Compile Include="Manager\StreamManager\StreamManger.cs" />
     <Compile Include="Manager\Systeminfomanager\ISystemInfoManagerClass.cs" />
     <Compile Include="Manager\Systeminfomanager\SystemInfoManagerClass.cs" />
-    <Compile Include="Manager\WebRTCSignalingBehavior.cs" />
-    <Compile Include="Manager\WebRTCSignalingServer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Structure\Analysis\AnalysisReultClass.cs" />
     <Compile Include="Structure\DB\CameraInfoClass.cs" />
     <Compile Include="Structure\DB\ServerInfosClass.cs" />
+    <Compile Include="Structure\Stream\StreamInfoClass.cs" />
     <Compile Include="Structure\Systeminfo\DataBaseClass.cs" />
     <Compile Include="Structure\Systeminfo\SystemInfoClass.cs" />
     <Compile Include="TRD\AnalysisReceiverThreadClass.cs" />
+    <Compile Include="TRD\ConnectThreadClass.cs" />
     <Compile Include="TRD\RenderThreadClass.cs" />
     <Compile Include="TRD\RtspStreamThreadClass.cs" />
+    <Compile Include="TRD\SocketThread.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -242,6 +244,7 @@
   <ItemGroup>
     <Content Include="ILLink\ILLink.Descriptors.LibraryBuild.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

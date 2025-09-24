@@ -1,96 +1,153 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Interop;
+using Analysis_Middle_Server.Structure.Stream;
+using MySqlX.XDevAPI;
+using Newtonsoft.Json;
 using OpenCvSharp;
 
 namespace Analysis_Middle_Server.TRD
 {
     public class RenderThreadClass
     {
-        //private List<int> _cameraIdList;
-        //private Thread _thread;
-        //private bool _running;
-        //private int _fps; // 초당 프레임 수 제한
-        //private Mat _rtspStream;
-        //private object _rtspStreamLock = new object();
+        private Thread m_Thread;
+        private bool m_Running;
+        private bool m_pause;
 
-        //public RenderThreadClass(List<int> cameraIdList, int fps = 30)
-        //{
-        //    _cameraIdList = cameraIdList;
-        //    _fps = fps > 0 ? fps : 30; // 0 이하일 경우 기본 30fps
-        //    _rtspStream = new Mat();
-        //}
+        private int m_userId;
+        private List<long> m_cameraIds;
+        private int m_x;
+        private int m_y;
 
-        //public void Start()
-        //{
-        //    if (_thread == null || !_thread.IsAlive)
-        //    {
-        //        _running = true;
-        //        _thread = new Thread(Run);
-        //        _thread.Start();
-        //    }
-        //}
+        private Mat m_TotalImg;
 
-        //public void Stop()
-        //{
-        //    _running = false;
-        //    _thread?.Join();
-        //}
+        public delegate Mat SendResultDelegate(int cameraId);
+        private SendResultDelegate m_callback;
+        private int m_cellWidth = 720;
+        private int m_cellHeight = 480;
 
-        //public Mat GetFrame()
-        //{
-        //    lock (_rtspStreamLock)
-        //    {
-        //        return _rtspStream.Clone();
-        //    }
-        //}
-        //public int GetCameraId()
-        //{
-        //    return _cameraId;
-        //}
+        public RenderThreadClass(int userId, List<long> cameraIds, int x, int y)
+        {
+            m_userId = userId;
+            m_cameraIds = cameraIds;
+            m_x = x;
+            m_y = y;
 
-        //private void Run()
-        //{
-        //    var capture = new VideoCapture(_rtspUrl);
+            m_Thread = new Thread(DoWork);
+            m_Running = false;
+            m_pause = false;
+            m_TotalImg = new Mat();
+        }
 
-        //    if (!capture.IsOpened())
-        //    {
-        //        Console.WriteLine($"Failed to open RTSP: {_rtspUrl}");
-        //        return;
-        //    }
+        public void SetCallback(SendResultDelegate callback)
+        {
+            m_callback = callback;
+        }
 
-        //    Mat frame = new Mat();
-        //    double frameIntervalMs = 1000.0 / _fps;
+        public Mat GetImage()
+        {
+            return m_TotalImg.Clone();
+        }
 
-        //    while (_running)
-        //    {
-        //        var startTime = DateTime.Now;
+        public int GetUserId()
+        {
+            return m_userId;
+        }
 
-        //        if (!capture.Read(frame) || frame.Empty())
-        //        {
-        //            Thread.Sleep(10);
-        //            continue;
-        //        }
+        public void Run()
+        {
+            m_Running = true;
+            m_pause = true;
+            m_Thread.Start();
+        }
 
-        //        // 프레임 이벤트 발생
-        //        lock (_rtspStreamLock)
-        //        {
-        //            _rtspStream = frame.Clone();
-        //        }
+        public void pause()
+        {
+            m_pause = false;
+        }
 
-        //        // FPS 제한 적용
-        //        var elapsed = (DateTime.Now - startTime).TotalMilliseconds;
-        //        int sleepTime = (int)(frameIntervalMs - elapsed);
-        //        if (sleepTime > 0)
-        //            Thread.Sleep(sleepTime);
-        //    }
+        public void restart()
+        {
+            m_pause = true;
+        }
 
-        //    frame.Dispose();
-        //    capture.Release();
-        //}
+        public void quit()
+        {
+            m_Running = false;
+            m_pause = false;
+            m_Thread.Join();
+            m_Thread = null;
+        }
+        private void DoWork()
+        {
+            while (m_Running)
+            {
+                if (!m_pause)
+                {
+                    Thread.Sleep(100);
+                    continue;
+                }
+
+                try
+                {
+                    int totalWidth = m_x * m_cellWidth;
+                    int totalHeight = m_y * m_cellHeight;
+
+                    using (Mat img = new Mat(totalHeight, totalWidth, MatType.CV_8UC3, Scalar.Black))
+                    {
+                        int cnt = 0;
+                        for (int j = 0; j < m_y; j++)
+                        {
+                            for (int i = 0; i < m_x; i++)
+                            {
+                                if (cnt >= m_cameraIds.Count)
+                                {
+                                    j = m_y;
+                                    break;
+                                }
+
+                                try
+                                {
+                                    Mat frame = m_callback?.Invoke((int)m_cameraIds[cnt]) ?? new Mat();
+                                    if (!frame.Empty())
+                                    {
+                                        Cv2.Resize(frame, frame, new OpenCvSharp.Size(m_cellWidth, m_cellHeight));
+                                        Rect roi = new Rect(i * m_cellWidth, j * m_cellHeight, m_cellWidth, m_cellHeight);
+                                        frame.CopyTo(new Mat(img, roi));
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"Frame error (CameraId={m_cameraIds[cnt]}): {ex}");
+                                }
+
+                                cnt++;
+                            }
+                        }
+
+                        lock (m_TotalImg)
+                        {
+                            m_TotalImg?.Dispose();
+                            m_TotalImg = img.Clone();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"[RenderThreadClass] Error: {ex}");
+                }
+
+                Thread.Sleep(30);
+            }
+        }
+
+
     }
 }

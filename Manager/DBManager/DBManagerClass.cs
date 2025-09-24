@@ -93,13 +93,11 @@ namespace Analysis_Middle_Server.Manager.DBManager
                             }
                         }
                     }
-                    using (var selectCmd = new MySqlCommand(
-                           "SELECT serverId, serverIp, serverPort, serverType, osId, osPw FROM serverInfos;", conn))
+                    using (var selectCmd = new MySqlCommand("SELECT serverId, serverIp, serverPort, serverType, osId, osPw FROM serverInfos;", conn))
                     {
-
                         using (var reader = selectCmd.ExecuteReader())
                         {
-                            if (reader.Read())
+                            while (reader.Read())
                             {
                                 ServerInfosClass tempServerInfosClass = new ServerInfosClass(
                                     reader.GetInt32("serverId"),
@@ -109,10 +107,12 @@ namespace Analysis_Middle_Server.Manager.DBManager
                                     reader.IsDBNull(reader.GetOrdinal("osId")) ? "" : reader.GetString("osId"),
                                     reader.IsDBNull(reader.GetOrdinal("osPw")) ? "" : reader.GetString("osPw")
                                 );
+
                                 m_ServerInfosClasses.Add(tempServerInfosClass);
                             }
                         }
                     }
+
                 }
             }
         }

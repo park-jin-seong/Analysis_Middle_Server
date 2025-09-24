@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenCvSharp;
 
 namespace Analysis_Middle_Server.Manager
 {
-    public interface IRenderManager
+    public interface ISocketManagerClass
     {
-        void MakeRender(int userId, List<long> cameraIds, int x, int y);
-
-        Mat GetImage(int userId);
     }
 }

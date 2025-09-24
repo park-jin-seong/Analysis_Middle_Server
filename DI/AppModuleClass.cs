@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Analysis_Middle_Server.Manager;
 using Analysis_Middle_Server.Manager.DBManager;
+using Analysis_Middle_Server.Manager.RenderManager;
 using Analysis_Middle_Server.Manager.StreamManager;
 using Analysis_Middle_Server.Manager.Systeminfomanager;
 using Analysis_Middle_Server.Manager.SystemInfoManager;
@@ -20,6 +21,8 @@ namespace Analysis_Middle_Server.DI
             Bind<IDBManagerClass>().To<DBManagerClass>().InSingletonScope();
             Bind<IStreamManger>().To<StreamManger>().InSingletonScope();
             Bind<IAnalysisReceiverManger>().To<AnalysisReceiverManger>().InSingletonScope();
+            Bind<IRenderManager>().To<RenderManager>().InSingletonScope();
+            Bind<ISocketManagerClass>().To<SocketManagerClass>().InSingletonScope();
 
 
             Bind<SystemInfoManagerClass>().ToSelf().InSingletonScope();
