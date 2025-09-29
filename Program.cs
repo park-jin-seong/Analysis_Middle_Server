@@ -55,6 +55,8 @@ namespace Analysis_Middle_Server
         private static void SetAnlysisStart()
         {
             kernel = new StandardKernel(new AppModuleClass());
+            IRenderManager renderManager = kernel.Get<IRenderManager>();
+            IAnalysisReceiverManger analysisReceiverManger = kernel.Get<IAnalysisReceiverManger>();
             kernel.Get<StreamManger>().SetAnlysisAndStart();
             kernel.Get<AnalysisReceiverManger>().SetAnlysisAndStart();
             kernel.Get<SocketManagerClass>().SetAnlysisAndStart();

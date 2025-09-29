@@ -131,7 +131,7 @@ namespace Analysis_Middle_Server.Manager.DBManager
                 conn.Open();
 
                 using (var cmd = new MySqlCommand(
-                    "SELECT cameraId, cameraName, cctvUrl, coordx, coordy, isAnalisis, analysisServerId FROM camerainfos WHERE isAnalisis = 1;", conn))
+                    "SELECT cameraId, cameraName, cctvUrl, coordx, coordy, isAnalisis, COALESCE(analysisServerId, 0) AS analysisServerId FROM camerainfos;", conn))
                 {
 
                     using (var reader = cmd.ExecuteReader())

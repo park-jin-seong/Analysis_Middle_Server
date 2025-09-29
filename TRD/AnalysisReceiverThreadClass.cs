@@ -22,14 +22,20 @@ namespace Analysis_Middle_Server.TRD
         private string m_ip;
         private int m_port;
 
+        private long m_analysisTime;
+
         private readonly object m_AnalysisLock = new object();
         private List<AnalysisReultClass> m_analysisReultClasses;
+
+        public delegate void SendResultDelegate(int cameraId);
+        private SendResultDelegate m_callback;
 
         public AnalysisReceiverThreadClass(string ip, int port, int cameraId)
         {
             m_ip = ip;
             m_port = port;
             m_CameraID = cameraId;
+            m_analysisTime = 0;
             m_analysisReultClasses = new List<AnalysisReultClass>();
             m_Thread = new Thread(DoWork);
         }
@@ -54,13 +60,16 @@ namespace Analysis_Middle_Server.TRD
         {
             return m_CameraID;
         }
-
         public List<AnalysisReultClass> GetAnalysisReult()
         {
             lock (m_AnalysisLock)
             {
-                return JsonConvert.DeserializeObject<List<AnalysisReultClass>>(JsonConvert.SerializeObject(m_analysisReultClasses));
+                return new List<AnalysisReultClass>(m_analysisReultClasses);
             }
+        }
+        public void SetCallback(SendResultDelegate callback)
+        {
+            m_callback = callback;
         }
 
         private void DoWork()
@@ -103,10 +112,10 @@ namespace Analysis_Middle_Server.TRD
 
                         try
                         {
-                            List<AnalysisReultClass> result = JsonConvert.DeserializeObject<List<AnalysisReultClass>>(json);
                             lock (m_AnalysisLock)
                             {
-                                m_analysisReultClasses = result;
+                                m_analysisReultClasses = JsonConvert.DeserializeObject<List<AnalysisReultClass>>(json);
+                                m_callback.Invoke(m_CameraID);
                             }
                         }
                         catch (Exception ex)
@@ -118,12 +127,13 @@ namespace Analysis_Middle_Server.TRD
                 catch (Exception ex)
                 {
                     Console.WriteLine("ReceiverThreadClass 오류: " + ex.Message);
+                    Thread.Sleep(10000);
                 }
                 finally
                 {
                     m_tcpClient?.Close();
                 }
-                Thread.Sleep(1000);
+                
             }
         }
     }

@@ -8,6 +8,7 @@ using Analysis_Middle_Server.Manager.DBManager;
 using Analysis_Middle_Server.Structure.Analysis;
 using Analysis_Middle_Server.Structure.DB;
 using Analysis_Middle_Server.TRD;
+using Ninject;
 using OpenCvSharp;
 
 namespace Analysis_Middle_Server.Manager
@@ -17,6 +18,9 @@ namespace Analysis_Middle_Server.Manager
         private List<ServerInfosClass> m_ServerInfosClasses;
         private List<CameraInfoClass> m_CameraInfosClasses;
         private List<AnalysisReceiverThreadClass> analysisReceiverThreadClasses;
+
+        [Inject]
+        public IRenderManager m_RenderManager { get; set; }
         public AnalysisReceiverManger(IDBManagerClass dBManagerClass) {
             m_ServerInfosClasses = dBManagerClass.GetServerInfosClasses();
             m_CameraInfosClasses = dBManagerClass.GetCameraInfosClasses();
@@ -24,6 +28,10 @@ namespace Analysis_Middle_Server.Manager
 
             foreach (CameraInfoClass cameraInfoClass in m_CameraInfosClasses)
             {
+                if (cameraInfoClass.isAnalisis != true)
+                {
+                    continue;
+                }
                 ServerInfosClass tmpServerInfo = new ServerInfosClass();
                 foreach (ServerInfosClass serverInfosClass in m_ServerInfosClasses)
                 {
@@ -34,8 +42,14 @@ namespace Analysis_Middle_Server.Manager
                 }
                 AnalysisReceiverThreadClass analysisReceiverThreadClass = new AnalysisReceiverThreadClass(tmpServerInfo.serverIp, tmpServerInfo.serverPort, cameraInfoClass.cameraId);
                 analysisReceiverThreadClass.Start();
+                analysisReceiverThreadClass.SetCallback(SetAnalysisTime);
                 analysisReceiverThreadClasses.Add(analysisReceiverThreadClass);
             }
+        }
+
+        public void SetAnalysisTime(int cameraId)
+        {
+            m_RenderManager.SetAnalysisTime(cameraId);
         }
 
         public List<AnalysisReultClass> GetAnalysisReult(int cameraId)
@@ -49,6 +63,7 @@ namespace Analysis_Middle_Server.Manager
             }
             return null;
         }
+        
 
         internal void SetAnlysisAndStart()
         {

@@ -28,10 +28,11 @@ namespace Analysis_Middle_Server.TRD
 
         private Mat m_TotalImg;
 
-        public delegate Mat SendResultDelegate(int cameraId);
+        public delegate Mat SendResultDelegate(int userId, int cameraId);
         private SendResultDelegate m_callback;
         private int m_cellWidth = 720;
         private int m_cellHeight = 480;
+        private object m_lock;
 
         public RenderThreadClass(int userId, List<long> cameraIds, int x, int y)
         {
@@ -44,6 +45,7 @@ namespace Analysis_Middle_Server.TRD
             m_Running = false;
             m_pause = false;
             m_TotalImg = new Mat();
+            m_lock = new object();
         }
 
         public void SetCallback(SendResultDelegate callback)
@@ -53,7 +55,11 @@ namespace Analysis_Middle_Server.TRD
 
         public Mat GetImage()
         {
-            return m_TotalImg.Clone();
+            lock (m_lock)
+            {
+                return m_TotalImg.Clone();
+            }
+            
         }
 
         public int GetUserId()
@@ -115,7 +121,7 @@ namespace Analysis_Middle_Server.TRD
 
                                 try
                                 {
-                                    Mat frame = m_callback?.Invoke((int)m_cameraIds[cnt]) ?? new Mat();
+                                    Mat frame = m_callback?.Invoke(m_userId,(int)m_cameraIds[cnt]) ?? new Mat();
                                     if (!frame.Empty())
                                     {
                                         Cv2.Resize(frame, frame, new OpenCvSharp.Size(m_cellWidth, m_cellHeight));
@@ -132,7 +138,7 @@ namespace Analysis_Middle_Server.TRD
                             }
                         }
 
-                        lock (m_TotalImg)
+                        lock (m_lock)
                         {
                             m_TotalImg?.Dispose();
                             m_TotalImg = img.Clone();

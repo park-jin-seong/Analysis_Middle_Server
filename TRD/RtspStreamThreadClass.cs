@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using OpenCvSharp;
 
 namespace Analysis_Middle_Server.TRD
@@ -15,15 +11,15 @@ namespace Analysis_Middle_Server.TRD
         private Thread _thread;
         private string _rtspUrl;
         private bool _running;
-        private int _fps; // 초당 프레임 수 제한
+        private int _fps;
         private Mat _rtspStream;
-        private object _rtspStreamLock = new object();
+        private readonly object _rtspStreamLock = new object();
 
-        public RtspStreamThreadClass(int cameraId, string rtspUrl, int fps = 30)
+        public RtspStreamThreadClass(int cameraId, string rtspUrl, int fps = 60)
         {
             _cameraId = cameraId;
             _rtspUrl = rtspUrl;
-            _fps = fps > 0 ? fps : 30; // 0 이하일 경우 기본 30fps
+            _fps = fps > 0 ? fps : 60;
             _rtspStream = new Mat();
         }
 
@@ -32,7 +28,7 @@ namespace Analysis_Middle_Server.TRD
             if (_thread == null || !_thread.IsAlive)
             {
                 _running = true;
-                _thread = new Thread(Run);
+                _thread = new Thread(Run) { IsBackground = true };
                 _thread.Start();
             }
         }
@@ -41,23 +37,27 @@ namespace Analysis_Middle_Server.TRD
         {
             _running = false;
             _thread?.Join();
+
+            lock (_rtspStreamLock)
+            {
+                _rtspStream?.Dispose();
+                _rtspStream = null;
+            }
         }
 
         public Mat GetFrame()
         {
             lock (_rtspStreamLock)
             {
-                return _rtspStream.Clone();
+                return _rtspStream?.Clone(); // 안전하게 복사
             }
         }
-        public int GetCameraId()
-        {
-            return _cameraId;
-        }
+
+        public int GetCameraId() => _cameraId;
 
         private void Run()
         {
-            var capture = new VideoCapture(_rtspUrl);
+            VideoCapture capture = new VideoCapture(_rtspUrl);
 
             if (!capture.IsOpened())
             {
@@ -68,6 +68,8 @@ namespace Analysis_Middle_Server.TRD
             Mat frame = new Mat();
             double frameIntervalMs = 1000.0 / _fps;
 
+            bool savedOnce = false;
+
             while (_running)
             {
                 var startTime = DateTime.Now;
@@ -77,22 +79,37 @@ namespace Analysis_Middle_Server.TRD
                     Thread.Sleep(10);
                     continue;
                 }
+                //if (!savedOnce)
+                //{
+                //    try
+                //    {
+                //        string dir = @"C:\RTSP_Frames";
+                //        Directory.CreateDirectory(dir); // 없으면 생성
+                //        string savePath = $@"C:\RTSP_Frames\camera_{_cameraId}_{DateTime.Now:yyyyMMdd_HHmmss}.png";
+                //        Cv2.ImWrite(savePath, frame);
+                //        Console.WriteLine($"Saved first frame as {savePath}");
+                //        savedOnce = true;
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        Console.WriteLine($"Failed to save frame: {ex.Message}");
+                //    }
+                //}
 
-                // 프레임 이벤트 발생
+                // 이전 Mat Dispose 후 교체
                 lock (_rtspStreamLock)
                 {
+                    _rtspStream?.Dispose();
                     _rtspStream = frame.Clone();
                 }
 
-                // FPS 제한 적용
+                // FPS 제한
                 var elapsed = (DateTime.Now - startTime).TotalMilliseconds;
                 int sleepTime = (int)(frameIntervalMs - elapsed);
                 if (sleepTime > 0)
                     Thread.Sleep(sleepTime);
             }
-
             frame.Dispose();
-            capture.Release();
         }
     }
 }

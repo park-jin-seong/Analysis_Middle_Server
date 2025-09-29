@@ -109,7 +109,7 @@ namespace Analysis_Middle_Server.TRD
                         m_Running = false;
                         m_pause = false;
                     }
-                    Thread.Sleep(33);
+                    Thread.Sleep(100);
                 }
             }
             m_tcpClient.Close();

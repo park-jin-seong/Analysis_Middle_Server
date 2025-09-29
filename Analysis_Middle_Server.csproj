@@ -228,6 +228,7 @@
     <Compile Include="Structure\Analysis\AnalysisReultClass.cs" />
     <Compile Include="Structure\DB\CameraInfoClass.cs" />
     <Compile Include="Structure\DB\ServerInfosClass.cs" />
+    <Compile Include="Structure\Render\RenderShowClass.cs" />
     <Compile Include="Structure\Stream\StreamInfoClass.cs" />
     <Compile Include="Structure\Systeminfo\DataBaseClass.cs" />
     <Compile Include="Structure\Systeminfo\SystemInfoClass.cs" />
