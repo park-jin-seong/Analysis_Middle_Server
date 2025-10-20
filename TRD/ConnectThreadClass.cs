@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -79,9 +80,15 @@ namespace Analysis_Middle_Server.TRD
                         msg = reader.ReadLine();  // 클라이언트에서 \n 으로 끝나는 문자열 전송해야 읽힘
                         
                         Console.WriteLine($"받은 메시지: {msg}");
-                        if (!msg.Equals(""))
+                        if (!msg.Equals("restart"))
                         {
                             m_callback.Invoke(client, msg, reader);
+                        }
+                        else
+                        {
+                            string exePath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                            Process.Start(exePath);  // 새 프로세스 실행
+                            Environment.Exit(0);     // 현재 프로세스 종료
                         }
                     }
                     catch (Exception ex)

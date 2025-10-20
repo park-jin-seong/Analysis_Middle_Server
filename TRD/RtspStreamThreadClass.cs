@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading;
 using OpenCvSharp;
 
@@ -55,6 +57,7 @@ namespace Analysis_Middle_Server.TRD
 
         public int GetCameraId() => _cameraId;
 
+
         private void Run()
         {
             VideoCapture capture = new VideoCapture(_rtspUrl);
@@ -104,10 +107,11 @@ namespace Analysis_Middle_Server.TRD
                 }
 
                 // FPS 제한
-                var elapsed = (DateTime.Now - startTime).TotalMilliseconds;
-                int sleepTime = (int)(frameIntervalMs - elapsed);
-                if (sleepTime > 0)
-                    Thread.Sleep(sleepTime);
+                //var elapsed = (DateTime.Now - startTime).TotalMilliseconds;
+                //int sleepTime = (int)(frameIntervalMs - elapsed);
+                //if (sleepTime > 0)
+                //    Thread.Sleep(sleepTime);
+                Thread.Sleep(10);
             }
             frame.Dispose();
         }

@@ -21,8 +21,8 @@ namespace Analysis_Middle_Server.DI
             Bind<IDBManagerClass>().To<DBManagerClass>().InSingletonScope();
             Bind<IStreamManger>().To<StreamManger>().InSingletonScope();
             Bind<IAnalysisReceiverManger>().To<AnalysisReceiverManger>().InSingletonScope();
-            Bind<ISocketManagerClass>().To<SocketManagerClass>().InSingletonScope();
             Bind<IRenderManager>().To<RenderManager>().InSingletonScope();
+            Bind<ISocketManagerClass>().To<SocketManagerClass>().InSingletonScope();
 
 
             Bind<SystemInfoManagerClass>().ToSelf().InSingletonScope();

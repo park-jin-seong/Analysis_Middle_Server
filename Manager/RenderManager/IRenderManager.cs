@@ -13,5 +13,7 @@ namespace Analysis_Middle_Server.Manager
         Mat GetImage(int userId);
 
         void SetAnalysisTime(int cameraId);
+
+        void DeleteRender(int userId);
     }
 }

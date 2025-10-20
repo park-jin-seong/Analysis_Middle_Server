@@ -32,7 +32,7 @@ namespace Analysis_Middle_Server.Manager
             if (type.Equals("render"))
             {
                 m_SocketThreads.Add(new SocketThread(tcpClient, reader));
-                m_SocketThreads.Last<SocketThread>().SetCallback(SendResultDelegate, GetFrameDelegate);
+                m_SocketThreads.Last<SocketThread>().SetCallback(SendResultDelegate, GetFrameDelegate, DeleteDelegate);
                 m_SocketThreads.Last<SocketThread>().Run();
             }
         }
@@ -44,6 +44,11 @@ namespace Analysis_Middle_Server.Manager
         public Mat GetFrameDelegate(int userId)
         {
             return m_RenderManager.GetImage(userId);
+        }
+
+        public void DeleteDelegate(int userId)
+        {
+            m_RenderManager.DeleteRender(userId);
         }
 
         internal void SetAnlysisAndStart()

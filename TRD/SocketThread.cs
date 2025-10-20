@@ -30,6 +30,9 @@ namespace Analysis_Middle_Server.TRD
 
         public delegate Mat GetFrameDelegate(int userId);
         private GetFrameDelegate m_FrameCallback;
+
+        public delegate void DeleteDelegate(int userId);
+        private DeleteDelegate m_DeleteCallback;
         public SocketThread(TcpClient tcpClient, StreamReader reader)
         {
             m_tcpClient = tcpClient;
@@ -39,10 +42,11 @@ namespace Analysis_Middle_Server.TRD
             m_pause = false;
         }
 
-        public void SetCallback(SendResultDelegate callback1, GetFrameDelegate callback2)
+        public void SetCallback(SendResultDelegate callback1, GetFrameDelegate callback2, DeleteDelegate callback3)
         {
             m_callback = callback1;
             m_FrameCallback = callback2;
+            m_DeleteCallback = callback3;
         }
 
         public void Run()
@@ -105,6 +109,7 @@ namespace Analysis_Middle_Server.TRD
                     }
                     catch (Exception e)
                     {
+                        m_DeleteCallback.Invoke(Convert.ToInt32(numbers.userId));
                         Console.WriteLine(m_tcpClient.Client.RemoteEndPoint + "통신 종료");
                         m_Running = false;
                         m_pause = false;

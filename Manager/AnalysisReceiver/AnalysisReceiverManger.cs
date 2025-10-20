@@ -32,13 +32,17 @@ namespace Analysis_Middle_Server.Manager
                 {
                     continue;
                 }
-                ServerInfosClass tmpServerInfo = new ServerInfosClass();
+                ServerInfosClass tmpServerInfo = null;
                 foreach (ServerInfosClass serverInfosClass in m_ServerInfosClasses)
                 {
                     if (serverInfosClass.serverId == cameraInfoClass.analysisServerId)
                     {
                         tmpServerInfo = serverInfosClass;
                     }
+                }
+                if (tmpServerInfo == null)
+                {
+                    continue;
                 }
                 AnalysisReceiverThreadClass analysisReceiverThreadClass = new AnalysisReceiverThreadClass(tmpServerInfo.serverIp, tmpServerInfo.serverPort, cameraInfoClass.cameraId);
                 analysisReceiverThreadClass.Start();
@@ -49,6 +53,10 @@ namespace Analysis_Middle_Server.Manager
 
         public void SetAnalysisTime(int cameraId)
         {
+            if (m_RenderManager == null)
+            {
+                return;
+            }
             m_RenderManager.SetAnalysisTime(cameraId);
         }
 

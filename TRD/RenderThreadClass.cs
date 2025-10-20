@@ -88,8 +88,12 @@ namespace Analysis_Middle_Server.TRD
         {
             m_Running = false;
             m_pause = false;
-            m_Thread.Join();
-            m_Thread = null;
+
+            if (m_Thread != null && m_Thread.IsAlive)
+            {
+                m_Thread.Join();
+                m_Thread = null;
+            }
         }
         private void DoWork()
         {

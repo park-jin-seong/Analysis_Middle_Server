@@ -23,12 +23,14 @@ namespace Analysis_Middle_Server.Manager.RenderManager
         private List<RenderShowClass> m_RenderShowClasses;
 
         private object m_Lock;
+        private object m_DeleteLock;
         public RenderManager(IStreamManger streamManger) 
         {
             m_StreamManger = streamManger;
             m_RenderThreadClasses = new List<RenderThreadClass>();
             m_RenderShowClasses = new List<RenderShowClass>();
             m_Lock = new object();
+            m_DeleteLock = new object();
         }
         private Mat GetChannelImg(int userId, int cameraId)
         {
@@ -149,6 +151,32 @@ namespace Analysis_Middle_Server.Manager.RenderManager
             tmpRenderThreadClass.SetCallback(GetChannelImg);
             tmpRenderThreadClass.Run();
             m_RenderThreadClasses.Add(tmpRenderThreadClass);
+        }
+
+        public void DeleteRender(int userId)
+        {
+            lock (m_DeleteLock)
+            {
+                for (int i = 0; i < m_RenderShowClasses.Count; i++)
+                {
+                    if (m_RenderShowClasses[i].m_userId == userId)
+                    {
+                        m_RenderShowClasses.RemoveAt(i);
+                        break;
+                    }
+                }
+                for (int i = 0; i < m_RenderThreadClasses.Count; i++)
+                {
+                    if (m_RenderThreadClasses[i].GetUserId() == userId)
+                    {
+                        m_RenderThreadClasses[i].quit();
+                        m_RenderThreadClasses.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
+
+
         }
 
         public void SetAnalysisTime(int cameraId)
